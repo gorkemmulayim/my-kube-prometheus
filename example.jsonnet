@@ -5,7 +5,7 @@ local kp =
   // (import 'kube-prometheus/addons/managed-cluster.libsonnet') +
   // (import 'kube-prometheus/addons/node-ports.libsonnet') +
   // (import 'kube-prometheus/addons/static-etcd.libsonnet') +
-  // (import 'kube-prometheus/addons/custom-metrics.libsonnet') +
+  (import 'kube-prometheus/addons/custom-metrics.libsonnet') +
   // (import 'kube-prometheus/addons/external-metrics.libsonnet') +
   {
     values+:: {
