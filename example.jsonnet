@@ -1,5 +1,6 @@
 local kp =
   (import 'kube-prometheus/main.libsonnet') +
+  (import 'kube-prometheus/addons/all-namespaces.libsonnet') +
   // Uncomment the following imports to enable its patches
   // (import 'kube-prometheus/addons/anti-affinity.libsonnet') +
   // (import 'kube-prometheus/addons/managed-cluster.libsonnet') +
@@ -12,6 +13,9 @@ local kp =
       common+: {
         namespace: 'monitoring',
       },
+    },
+    prometheus+: {
+      namespaces: [],
     },
   };
 
