@@ -14,11 +14,21 @@ local kp =
       common+: {
         namespace: 'monitoring',
       },
+      grafana+:: {
+        config+: {
+          sections+: {
+            server+: {
+              root_url: 'https://grafana.localhost',
+            },
+          },
+        },
+      },
     },
     prometheus+:: {
       namespaces: [],
       prometheus+: {
         spec+: {
+          externalUrl: 'https://prometheus.localhost',
           ruleSelector: {},
           retention: '30d',
           replicas: 1,
@@ -31,6 +41,60 @@ local kp =
               },
             },
           },
+        },
+      },
+      ingress: {
+        kind: 'Ingress',
+        apiVersion: 'networking.k8s.io/v1',
+        metadata: {
+          name: 'prometheus-k8s',
+          namespace: $.values.common.namespace,
+          annotations: {
+            'nginx.ingress.kubernetes.io/force-ssl-redirect': 'true',
+          },
+        },
+        spec: {
+          ingressClassName: 'nginx',
+          rules: [{
+            host: 'prometheus.localhost',
+            http: {
+              paths: [{
+                path: '/',
+                pathType: 'Prefix',
+                backend: {
+                  service: {
+                    name: 'prometheus-k8s',
+                    port: 'web',
+                  },
+                },
+              }],
+            },
+          }],
+        },
+      },
+      virtualService: {
+        kind: 'VirtualService',
+        apiVersion: 'networking.istio.io/v1beta1',
+        metadata: {
+          name: 'prometheus-k8s',
+          namespace: $.values.common.namespace,
+        },
+        spec: {
+          hosts: ['prometheus.localhost'],
+          gateways: ['istio-system/default-gateway'],
+          http: [{
+            match: [{
+              uri: [{
+                prefix: '/',
+              }],
+            }],
+            route: [{
+              destination: {
+                host: 'prometheus-k8s',
+                port: 'web',
+              },
+            }],
+          }],
         },
       },
     },
@@ -56,7 +120,61 @@ local kp =
           },
         },
       },
-      storage: {
+      ingress: {
+        kind: 'Ingress',
+        apiVersion: 'networking.k8s.io/v1',
+        metadata: {
+          name: 'grafana',
+          namespace: $.values.common.namespace,
+          annotations: {
+            'nginx.ingress.kubernetes.io/force-ssl-redirect': 'true',
+          },
+        },
+        spec: {
+          ingressClassName: 'nginx',
+          rules: [{
+            host: 'grafana.localhost',
+            http: {
+              paths: [{
+                path: '/',
+                pathType: 'Prefix',
+                backend: {
+                  service: {
+                    name: 'grafana',
+                    port: 'http',
+                  },
+                },
+              }],
+            },
+          }],
+        },
+      },
+      virtualService: {
+        kind: 'VirtualService',
+        apiVersion: 'networking.istio.io/v1beta1',
+        metadata: {
+          name: 'grafana',
+          namespace: $.values.common.namespace,
+        },
+        spec: {
+          hosts: ['grafana.localhost'],
+          gateways: ['istio-system/default-gateway'],
+          http: [{
+            match: [{
+              uri: [{
+                prefix: '/',
+              }],
+            }],
+            route: [{
+              destination: {
+                host: 'grafana',
+                port: 'http',
+              },
+            }],
+          }],
+        },
+      },
+      persistentVolumeClaim: {
         kind: 'PersistentVolumeClaim',
         apiVersion: 'v1',
         metadata: {
@@ -77,6 +195,7 @@ local kp =
     alertmanager+:: {
       alertmanager+: {
         spec+: {
+          externalUrl: 'https://alertmanager.localhost',
           replicas: 1,
           storage: {
             volumeClaimTemplate: {
@@ -87,6 +206,60 @@ local kp =
               },
             },
           },
+        },
+      },
+      ingress: {
+        kind: 'Ingress',
+        apiVersion: 'networking.k8s.io/v1',
+        metadata: {
+          name: 'alertmanager-main',
+          namespace: $.values.common.namespace,
+          annotations: {
+            'nginx.ingress.kubernetes.io/force-ssl-redirect': 'true',
+          },
+        },
+        spec: {
+          ingressClassName: 'nginx',
+          rules: [{
+            host: 'alertmanager.localhost',
+            http: {
+              paths: [{
+                path: '/',
+                pathType: 'Prefix',
+                backend: {
+                  service: {
+                    name: 'alertmanager-main',
+                    port: 'web',
+                  },
+                },
+              }],
+            },
+          }],
+        },
+      },
+      virtualService: {
+        kind: 'VirtualService',
+        apiVersion: 'networking.istio.io/v1beta1',
+        metadata: {
+          name: 'alertmanager-main',
+          namespace: $.values.common.namespace,
+        },
+        spec: {
+          hosts: ['alertmanager.localhost'],
+          gateways: ['istio-system/default-gateway'],
+          http: [{
+            match: [{
+              uri: [{
+                prefix: '/',
+              }],
+            }],
+            route: [{
+              destination: {
+                host: 'alertmanager-main',
+                port: 'web',
+              },
+            }],
+          }],
         },
       },
     },
