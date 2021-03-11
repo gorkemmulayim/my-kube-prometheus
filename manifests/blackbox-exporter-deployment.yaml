@@ -23,6 +23,20 @@ spec:
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 0.18.0
     spec:
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - podAffinityTerm:
+              labelSelector:
+                matchExpressions:
+                - key: app.kubernetes.io/name
+                  operator: In
+                  values:
+                  - blackbox-exporter
+              namespaces:
+              - monitoring
+              topologyKey: kubernetes.io/hostname
+            weight: 100
       containers:
       - args:
         - --config.file=/etc/blackbox_exporter/config.yml
