@@ -61,7 +61,9 @@ local kp =
                 backend: {
                   service: {
                     name: 'prometheus-k8s',
-                    port: 'web',
+                    port: {
+                      name: 'web',
+                    },
                   },
                 },
               }],
@@ -138,7 +140,9 @@ local kp =
                 backend: {
                   service: {
                     name: 'grafana',
-                    port: 'http',
+                    port: {
+                      name: 'http',
+                    },
                   },
                 },
               }],
@@ -226,7 +230,9 @@ local kp =
                 backend: {
                   service: {
                     name: 'alertmanager-main',
-                    port: 'web',
+                    port: {
+                      name: 'web',
+                    },
                   },
                 },
               }],

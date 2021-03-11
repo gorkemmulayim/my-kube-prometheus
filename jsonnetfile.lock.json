@@ -18,7 +18,7 @@
           "subdir": "contrib/mixin"
         }
       },
-      "version": "cb0e58942f623153be0d9fca3e16ef43ad6e9a14",
+      "version": "3ead91ca3edf66112d56c453169343515bba71c3",
       "sum": "EgKKzxcW3ttt7gjPMX//DNTqNcn/0o2VAIaWJ/HSLEc="
     },
     {
@@ -38,7 +38,7 @@
           "subdir": "grafana-builder"
         }
       },
-      "version": "92fcc504b93197ead51bbe10947f8c868e34450d",
+      "version": "96b03e790fa3a15e74a1fa79cef79351ce4d1559",
       "sum": "GRf2GvwEU4jhXV+JOonXSZ4wdDv8mnHBPCQ6TUVd+g8="
     },
     {
@@ -109,7 +109,7 @@
           "subdir": "jsonnet/mixin"
         }
       },
-      "version": "9cd4bb9af6225277943c05fec895514c17cf5bdd",
+      "version": "2c31e5d254af5a91bedb8340eb450e3ba8700907",
       "sum": "6reUygVmQrLEWQzTKcH8ceDbvM+2ztK3z2VBR2K2l+U="
     },
     {
@@ -129,7 +129,7 @@
           "subdir": "doc/alertmanager-mixin"
         }
       },
-      "version": "0f9cab6991e6cb001f7438d8ddacbf16341b024a",
+      "version": "2d77eab99d95da4c596350ba9d10d9e1a2d4c729",
       "sum": "VP1vn/WTGLZaBgGhGMUO81qNTc/fnp5KtzVjcaxad6Q=",
       "name": "alertmanager"
     },
