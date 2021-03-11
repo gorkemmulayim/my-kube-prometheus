@@ -15,4 +15,5 @@ spec:
     route:
     - destination:
         host: prometheus-k8s
-        port: web
+        port:
+          name: web

@@ -11,6 +11,9 @@ local kp =
       common+: {
         namespace: 'monitoring',
       },
+      prometheus+: {
+        namespaces: [],
+      },
       grafana+:: {
         config+: {
           sections+: {
@@ -22,7 +25,6 @@ local kp =
       },
     },
     prometheus+:: {
-      namespaces: [],
       prometheus+: {
         spec+: {
           externalUrl: 'https://prometheus.localhost',
@@ -90,7 +92,9 @@ local kp =
             route: [{
               destination: {
                 host: 'prometheus-k8s',
-                port: 'web',
+                port: {
+                  name: 'web',
+                },
               },
             }],
           }],
@@ -169,7 +173,9 @@ local kp =
             route: [{
               destination: {
                 host: 'grafana',
-                port: 'http',
+                port: {
+                  name: 'http',
+                },
               },
             }],
           }],
@@ -259,7 +265,9 @@ local kp =
             route: [{
               destination: {
                 host: 'alertmanager-main',
-                port: 'web',
+                port: {
+                  name: 'web',
+                },
               },
             }],
           }],

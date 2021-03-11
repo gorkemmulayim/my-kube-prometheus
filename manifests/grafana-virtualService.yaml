@@ -15,4 +15,5 @@ spec:
     route:
     - destination:
         host: grafana
-        port: http
+        port:
+          name: http

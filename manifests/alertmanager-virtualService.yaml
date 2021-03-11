@@ -15,4 +15,5 @@ spec:
     route:
     - destination:
         host: alertmanager-main
-        port: web
+        port:
+          name: web
