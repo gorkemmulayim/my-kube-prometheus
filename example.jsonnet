@@ -34,6 +34,46 @@ local kp =
         },
       },
     },
+    grafana+:: {
+      deployment+: {
+        spec+: {
+          template+: {
+            spec+: {
+            volumes:
+              std.map(
+                function(v)
+                  if v.name == 'grafana-storage' then {
+                    'name':'grafana-storage',
+                    'persistentVolumeClaim': {
+                      'claimName': 'grafana-storage',
+                    }
+                  }
+                  else
+                    v,
+              super.volumes,
+              ),
+            },
+          },
+        },
+      },
+      storage: {
+        kind: 'PersistentVolumeClaim',
+        apiVersion: 'v1',
+        metadata: {
+          name: 'grafana-storage',
+          namespace: $.values.common.namespace,
+        },
+        spec: {
+          accessModes: ['ReadWriteOnce'],
+          resources: {
+            requests: {
+              storage: '4Gi',
+            },
+          },
+          storageClassName: 'rook-ceph-block',
+        },
+      },
+    },
     alertmanager+:: {
       alertmanager+: {
         spec+: {
