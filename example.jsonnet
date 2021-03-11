@@ -19,8 +19,9 @@ local kp =
       namespaces: [],
       prometheus+: {
         spec+: {
+          ruleSelector: {},
           retention: '30d',
-          replicas: '1',
+          replicas: 1,
           storage: {
             volumeClaimTemplate: {
               spec: {
@@ -36,7 +37,7 @@ local kp =
     alertmanager+:: {
       alertmanager+: {
         spec+: {
-          replicas: '1',
+          replicas: 1,
           storage: {
             volumeClaimTemplate: {
               spec: {

@@ -43,15 +43,12 @@ spec:
   podMonitorSelector: {}
   probeNamespaceSelector: {}
   probeSelector: {}
-  replicas: "1"
+  replicas: 1
   resources:
     requests:
       memory: 400Mi
   retention: 30d
-  ruleSelector:
-    matchLabels:
-      prometheus: k8s
-      role: alert-rules
+  ruleSelector: {}
   securityContext:
     fsGroup: 2000
     runAsNonRoot: true
