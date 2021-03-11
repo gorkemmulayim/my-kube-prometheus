@@ -120,6 +120,12 @@ spec:
         - mountPath: /grafana-dashboard-definitions/0/statefulset
           name: grafana-dashboard-statefulset
           readOnly: false
+        - mountPath: /grafana-dashboard-definitions/0/weave-net-cluster
+          name: grafana-dashboard-weave-net-cluster
+          readOnly: false
+        - mountPath: /grafana-dashboard-definitions/0/weave-net
+          name: grafana-dashboard-weave-net
+          readOnly: false
         - mountPath: /grafana-dashboard-definitions/0/workload-total
           name: grafana-dashboard-workload-total
           readOnly: false
@@ -209,6 +215,12 @@ spec:
       - configMap:
           name: grafana-dashboard-statefulset
         name: grafana-dashboard-statefulset
+      - configMap:
+          name: grafana-dashboard-weave-net-cluster
+        name: grafana-dashboard-weave-net-cluster
+      - configMap:
+          name: grafana-dashboard-weave-net
+        name: grafana-dashboard-weave-net
       - configMap:
           name: grafana-dashboard-workload-total
         name: grafana-dashboard-workload-total

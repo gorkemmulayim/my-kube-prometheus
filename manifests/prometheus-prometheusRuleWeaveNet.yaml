@@ -1,0 +1,107 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  labels:
+    prometheus: k8s
+    role: alert-rules
+  name: weave-net-rules
+  namespace: monitoring
+spec:
+  groups:
+  - name: weave-net
+    rules:
+    - alert: WeaveNetIPAMSplitBrain
+      annotations:
+        description: 'actionable: Weave Net network has a split brain problem. Please
+          find the problem and fix it.'
+        summary: Percentage of all IP addresses owned by unreachable peers is not
+          same for every node.
+      expr: max(weave_ipam_unreachable_percentage) - min(weave_ipam_unreachable_percentage)
+        > 0
+      for: 3m
+      labels:
+        severity: critical
+    - alert: WeaveNetIPAMUnreachable
+      annotations:
+        description: 'actionable: Please find the problem and fix it.'
+        summary: Percentage of all IP addresses owned by unreachable peers is above
+          threshold.
+      expr: weave_ipam_unreachable_percentage > 25
+      for: 10m
+      labels:
+        severity: critical
+    - alert: WeaveNetIPAMPendingAllocates
+      annotations:
+        description: 'actionable: Please find the problem and fix it.'
+        summary: Number of pending allocates is above the threshold.
+      expr: sum(weave_ipam_pending_allocates) > 0
+      for: 3m
+      labels:
+        severity: critical
+    - alert: WeaveNetIPAMPendingClaims
+      annotations:
+        description: 'actionable: Please find the problem and fix it.'
+        summary: Number of pending claims is above the threshold.
+      expr: sum(weave_ipam_pending_claims) > 0
+      for: 3m
+      labels:
+        severity: critical
+    - alert: WeaveNetFastDPFlowsLow
+      annotations:
+        description: 'actionable: Please find the reason for FastDP flows to go below
+          the threshold and fix it.'
+        summary: Number of FastDP flows is below the threshold.
+      expr: sum(weave_flows) < 15000
+      for: 3m
+      labels:
+        severity: critical
+    - alert: WeaveNetFastDPFlowsOff
+      annotations:
+        description: 'actionable: Please find the reason for FastDP flows to be off
+          and fix it.'
+        summary: FastDP flows is zero.
+      expr: sum(weave_flows == bool 0) > 0
+      for: 3m
+      labels:
+        severity: critical
+    - alert: WeaveNetHighConnectionTerminationRate
+      annotations:
+        description: 'actionable: Please find the reason for the high connection termination
+          rate and fix it.'
+        summary: A lot of connections are getting terminated.
+      expr: rate(weave_connection_terminations_total[5m]) > 0.1
+      for: 5m
+      labels:
+        severity: critical
+    - alert: WeaveNetConnectionsConnecting
+      annotations:
+        description: 'actionable: Please find the reason for this and fix it.'
+        summary: A lot of connections are in connecting state.
+      expr: sum(weave_connections{state="connecting"}) > 0
+      for: 3m
+      labels:
+        severity: critical
+    - alert: WeaveNetConnectionsRetying
+      annotations:
+        description: 'actionable: Please find the reason for this and fix it.'
+        summary: A lot of connections are in retrying state.
+      expr: sum(weave_connections{state="retrying"}) > 0
+      for: 3m
+      labels:
+        severity: critical
+    - alert: WeaveNetConnectionsPending
+      annotations:
+        description: 'actionable: Please find the reason for this and fix it.'
+        summary: A lot of connections are in pending state.
+      expr: sum(weave_connections{state="pending"}) > 0
+      for: 3m
+      labels:
+        severity: critical
+    - alert: WeaveNetConnectionsFailed
+      annotations:
+        description: 'actionable: Please find the reason and fix it.'
+        summary: A lot of connections are in failed state.
+      expr: sum(weave_connections{state="failed"}) > 0
+      for: 3m
+      labels:
+        severity: critical
