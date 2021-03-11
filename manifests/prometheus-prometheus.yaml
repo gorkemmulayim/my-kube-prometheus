@@ -43,10 +43,11 @@ spec:
   podMonitorSelector: {}
   probeNamespaceSelector: {}
   probeSelector: {}
-  replicas: 2
+  replicas: "1"
   resources:
     requests:
       memory: 400Mi
+  retention: 30d
   ruleSelector:
     matchLabels:
       prometheus: k8s
@@ -58,4 +59,13 @@ spec:
   serviceAccountName: prometheus-k8s
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector: {}
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 32Gi
+        storageClassName: rook-ceph-block
   version: 2.25.0

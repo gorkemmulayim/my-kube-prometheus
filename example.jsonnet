@@ -7,15 +7,47 @@ local kp =
   // (import 'kube-prometheus/addons/node-ports.libsonnet') +
   // (import 'kube-prometheus/addons/static-etcd.libsonnet') +
   (import 'kube-prometheus/addons/custom-metrics.libsonnet') +
-  // (import 'kube-prometheus/addons/external-metrics.libsonnet') +
+  (import 'kube-prometheus/addons/external-metrics.libsonnet') +
+  (import 'kube-prometheus/platforms/kubeadm.libsonnet') +
   {
     values+:: {
       common+: {
         namespace: 'monitoring',
       },
     },
-    prometheus+: {
+    prometheus+:: {
       namespaces: [],
+      prometheus+: {
+        spec+: {
+          retention: '30d',
+          replicas: '1',
+          storage: {
+            volumeClaimTemplate: {
+              spec: {
+                accessModes: ['ReadWriteOnce'],
+                resources: { requests: { storage: '32Gi' } },
+                storageClassName: 'rook-ceph-block',
+              },
+            },
+          },
+        },
+      },
+    },
+    alertmanager+:: {
+      alertmanager+: {
+        spec+: {
+          replicas: '1',
+          storage: {
+            volumeClaimTemplate: {
+              spec: {
+                accessModes: ['ReadWriteOnce'],
+                resources: { requests: { storage: '16Gi' } },
+                storageClassName: 'rook-ceph-block',
+              },
+            },
+          },
+        },
+      },
     },
   };
 

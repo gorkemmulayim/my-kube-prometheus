@@ -1,6 +1,7 @@
 apiVersion: v1
 data:
   config.yaml: |-
+    "externalRules": []
     "resourceRules":
       "cpu":
         "containerLabel": "container"
