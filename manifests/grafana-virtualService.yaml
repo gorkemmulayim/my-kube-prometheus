@@ -11,8 +11,9 @@ spec:
   http:
   - match:
     - uri:
-      - prefix: /
+        prefix: /
     route:
     - destination:
         host: grafana
-        port: "3000"
+        port:
+          number: 3000

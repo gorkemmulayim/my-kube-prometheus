@@ -11,8 +11,9 @@ spec:
   http:
   - match:
     - uri:
-      - prefix: /
+        prefix: /
     route:
     - destination:
         host: alertmanager-main
-        port: "9093"
+        port:
+          number: 9093

@@ -85,14 +85,16 @@ local kp =
           gateways: ['istio-system/default-gateway'],
           http: [{
             match: [{
-              uri: [{
+              uri: {
                 prefix: '/',
-              }],
+              },
             }],
             route: [{
               destination: {
                 host: 'prometheus-k8s',
-                port: '9090',
+                port: {
+                  number: 9090,
+                },
               },
             }],
           }],
@@ -164,14 +166,16 @@ local kp =
           gateways: ['istio-system/default-gateway'],
           http: [{
             match: [{
-              uri: [{
+              uri: {
                 prefix: '/',
-              }],
+              },
             }],
             route: [{
               destination: {
                 host: 'grafana',
-                port: '3000',
+                port: {
+                  number: 3000,
+                },
               },
             }],
           }],
@@ -254,14 +258,16 @@ local kp =
           gateways: ['istio-system/default-gateway'],
           http: [{
             match: [{
-              uri: [{
+              uri: {
                 prefix: '/',
-              }],
+              },
             }],
             route: [{
               destination: {
                 host: 'alertmanager-main',
-                port: '9093',
+                port: {
+                  number: 9093,
+                },
               },
             }],
           }],
