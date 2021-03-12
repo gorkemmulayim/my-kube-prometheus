@@ -92,9 +92,7 @@ local kp =
             route: [{
               destination: {
                 host: 'prometheus-k8s',
-                port: {
-                  name: 'web',
-                },
+                port: '9090',
               },
             }],
           }],
@@ -173,9 +171,7 @@ local kp =
             route: [{
               destination: {
                 host: 'grafana',
-                port: {
-                  name: 'http',
-                },
+                port: '3000',
               },
             }],
           }],
@@ -265,9 +261,7 @@ local kp =
             route: [{
               destination: {
                 host: 'alertmanager-main',
-                port: {
-                  name: 'web',
-                },
+                port: '9093',
               },
             }],
           }],

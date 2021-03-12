@@ -15,5 +15,4 @@ spec:
     route:
     - destination:
         host: prometheus-k8s
-        port:
-          name: web
+        port: "9090"
