@@ -274,22 +274,6 @@ local kp =
         },
       },
     },
-    kubernetesControlPlane+: {
-      serviceMonitorKubeScheduler+: {
-        spec+: {
-          selector+: {
-            matchLabels: { 'component': 'kube-scheduler' },
-          },
-        },
-      },
-      serviceMonitorKubeControllerManager+: {
-        spec+: {
-          selector+: {
-            matchLabels: { 'component': 'kube-controller-manager' },
-          },
-        },
-      },
-    },
   };
 
 { 'setup/0namespace-namespace': kp.kubePrometheus.namespace } +

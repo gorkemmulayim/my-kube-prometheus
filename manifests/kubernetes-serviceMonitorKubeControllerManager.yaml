@@ -56,4 +56,4 @@ spec:
     - kube-system
   selector:
     matchLabels:
-      component: kube-controller-manager
+      app.kubernetes.io/name: kube-controller-manager
