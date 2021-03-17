@@ -4,16 +4,7 @@
     {
       "source": {
         "git": {
-          "remote": "https://github.com/grafana/jsonnet-libs.git",
-          "subdir": "grafana-builder"
-        }
-      },
-      "version": "master"
-    },
-    {
-      "source": {
-        "git": {
-          "remote": "https://github.com/jaegertracing/jaeger.git",
+          "remote": "https://github.com/jaegertracing/jaeger",
           "subdir": "monitoring/jaeger-mixin"
         }
       },
@@ -22,7 +13,7 @@
     {
       "source": {
         "git": {
-          "remote": "https://github.com/prometheus-operator/kube-prometheus.git",
+          "remote": "https://github.com/prometheus-operator/kube-prometheus",
           "subdir": "jsonnet/kube-prometheus"
         }
       },
