@@ -1,3 +1,6 @@
+local jaegerAlerts = (import 'jaeger-mixin/alerts.libsonnet').prometheusAlerts;
+local jaegerDashboard = (import 'jaeger-mixin/mixin.libsonnet').grafanaDashboards;
+
 local kp =
   (import 'kube-prometheus/main.libsonnet') +
   (import 'kube-prometheus/addons/all-namespaces.libsonnet') +
@@ -6,6 +9,8 @@ local kp =
   (import 'kube-prometheus/addons/external-metrics.libsonnet') +
   (import 'kube-prometheus/platforms/kubeadm.libsonnet') +
   (import 'kube-prometheus/addons/weave-net/weave-net.libsonnet') +
+  (import 'jaeger-mixin/alerts.libsonnet') +
+  (import 'jaeger-mixin/mixin.libsonnet') +
   {
     values+:: {
       common+: {
@@ -14,13 +19,16 @@ local kp =
       prometheus+: {
         namespaces: [],
       },
-      grafana+:: {
+      grafana+: {
         config+: {
           sections+: {
             server+: {
               root_url: 'https://grafana.localhost',
             },
           },
+        },
+        dashboards+:: {
+          'jaeger.json': jaegerDashboard['jaeger.json'],
         },
       },
     },
@@ -99,6 +107,15 @@ local kp =
             }],
           }],
         },
+      },
+      prometheusRuleJaeger: {
+        apiVersion: 'monitoring.coreos.com/v1',
+        kind: 'PrometheusRule',
+        metadata: {
+          name: 'jaeger-alerts',
+          namespace: $.values.common.namespace,
+        },
+        spec: jaegerAlerts,
       },
     },
     grafana+:: {

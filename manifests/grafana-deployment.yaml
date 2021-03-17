@@ -63,6 +63,9 @@ spec:
         - mountPath: /grafana-dashboard-definitions/0/controller-manager
           name: grafana-dashboard-controller-manager
           readOnly: false
+        - mountPath: /grafana-dashboard-definitions/0/jaeger
+          name: grafana-dashboard-jaeger
+          readOnly: false
         - mountPath: /grafana-dashboard-definitions/0/k8s-resources-cluster
           name: grafana-dashboard-k8s-resources-cluster
           readOnly: false
@@ -158,6 +161,9 @@ spec:
       - configMap:
           name: grafana-dashboard-controller-manager
         name: grafana-dashboard-controller-manager
+      - configMap:
+          name: grafana-dashboard-jaeger
+        name: grafana-dashboard-jaeger
       - configMap:
           name: grafana-dashboard-k8s-resources-cluster
         name: grafana-dashboard-k8s-resources-cluster

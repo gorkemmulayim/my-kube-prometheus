@@ -38,8 +38,18 @@
           "subdir": "grafana-builder"
         }
       },
-      "version": "96b03e790fa3a15e74a1fa79cef79351ce4d1559",
+      "version": "887607c7745706c23c63524c83c7c92780992d49",
       "sum": "GRf2GvwEU4jhXV+JOonXSZ4wdDv8mnHBPCQ6TUVd+g8="
+    },
+    {
+      "source": {
+        "git": {
+          "remote": "https://github.com/jaegertracing/jaeger.git",
+          "subdir": "monitoring/jaeger-mixin"
+        }
+      },
+      "version": "915d3af864e4a8be19a382a1090521c33608603d",
+      "sum": "U/RwaRP/ps+5dVyeVxeFEb2psfZHQgEjHU2Jeb454Kg="
     },
     {
       "source": {
