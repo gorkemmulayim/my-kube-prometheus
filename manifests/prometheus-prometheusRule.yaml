@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: prometheus
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: 2.25.0
+    app.kubernetes.io/version: 2.26.0
     prometheus: k8s
     role: alert-rules
   name: prometheus-k8s-prometheus-rules
@@ -149,12 +149,12 @@ spec:
         summary: Prometheus fails to send samples to remote storage.
       expr: |
         (
-          rate(prometheus_remote_storage_failed_samples_total{job="prometheus-k8s",namespace="monitoring"}[5m])
+          (rate(prometheus_remote_storage_failed_samples_total{job="prometheus-k8s",namespace="monitoring"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job="prometheus-k8s",namespace="monitoring"}[5m]))
         /
           (
-            rate(prometheus_remote_storage_failed_samples_total{job="prometheus-k8s",namespace="monitoring"}[5m])
+            (rate(prometheus_remote_storage_failed_samples_total{job="prometheus-k8s",namespace="monitoring"}[5m]) or rate(prometheus_remote_storage_samples_failed_total{job="prometheus-k8s",namespace="monitoring"}[5m]))
           +
-            rate(prometheus_remote_storage_succeeded_samples_total{job="prometheus-k8s",namespace="monitoring"}[5m])
+            (rate(prometheus_remote_storage_succeeded_samples_total{job="prometheus-k8s",namespace="monitoring"}[5m]) or rate(prometheus_remote_storage_samples_total{job="prometheus-k8s",namespace="monitoring"}[5m]))
           )
         )
         * 100
@@ -234,6 +234,19 @@ spec:
           the targets limit.
       expr: |
         increase(prometheus_target_scrape_pool_exceeded_target_limit_total{job="prometheus-k8s",namespace="monitoring"}[5m]) > 0
+      for: 15m
+      labels:
+        severity: warning
+    - alert: PrometheusLabelLimitHit
+      annotations:
+        description: Prometheus {{$labels.namespace}}/{{$labels.pod}} has dropped
+          {{ printf "%.0f" $value }} targets because some samples exceeded the configured
+          label_limit, label_name_length_limit or label_value_length_limit.
+        runbook_url: https://github.com/prometheus-operator/kube-prometheus/wiki/prometheuslabellimithit
+        summary: Prometheus has dropped targets because some scrape configs have exceeded
+          the labels limit.
+      expr: |
+        increase(prometheus_target_scrape_pool_exceeded_label_limits_total{job="prometheus-k8s",namespace="monitoring"}[5m]) > 0
       for: 15m
       labels:
         severity: warning

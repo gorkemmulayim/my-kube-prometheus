@@ -17,6 +17,8 @@ spec:
       app.kubernetes.io/part-of: kube-prometheus
   template:
     metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: blackbox-exporter
       labels:
         app.kubernetes.io/component: exporter
         app.kubernetes.io/name: blackbox-exporter
@@ -28,11 +30,10 @@ spec:
           preferredDuringSchedulingIgnoredDuringExecution:
           - podAffinityTerm:
               labelSelector:
-                matchExpressions:
-                - key: app.kubernetes.io/name
-                  operator: In
-                  values:
-                  - blackbox-exporter
+                matchLabels:
+                  app.kubernetes.io/component: exporter
+                  app.kubernetes.io/name: blackbox-exporter
+                  app.kubernetes.io/part-of: kube-prometheus
               namespaces:
               - monitoring
               topologyKey: kubernetes.io/hostname

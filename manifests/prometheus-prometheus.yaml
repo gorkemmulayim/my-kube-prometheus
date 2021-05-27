@@ -5,7 +5,7 @@ metadata:
     app.kubernetes.io/component: prometheus
     app.kubernetes.io/name: prometheus
     app.kubernetes.io/part-of: kube-prometheus
-    app.kubernetes.io/version: 2.25.0
+    app.kubernetes.io/version: 2.26.0
     prometheus: k8s
   name: k8s
   namespace: monitoring
@@ -15,11 +15,11 @@ spec:
       preferredDuringSchedulingIgnoredDuringExecution:
       - podAffinityTerm:
           labelSelector:
-            matchExpressions:
-            - key: prometheus
-              operator: In
-              values:
-              - k8s
+            matchLabels:
+              app.kubernetes.io/component: prometheus
+              app.kubernetes.io/name: prometheus
+              app.kubernetes.io/part-of: kube-prometheus
+              prometheus: k8s
           namespaces:
           - monitoring
           topologyKey: kubernetes.io/hostname
@@ -30,8 +30,9 @@ spec:
       name: alertmanager-main
       namespace: monitoring
       port: web
+  externalLabels: {}
   externalUrl: https://prometheus.localhost
-  image: quay.io/prometheus/prometheus:v2.25.0
+  image: quay.io/prometheus/prometheus:v2.26.0
   nodeSelector:
     kubernetes.io/os: linux
   podMetadata:
@@ -39,7 +40,7 @@ spec:
       app.kubernetes.io/component: prometheus
       app.kubernetes.io/name: prometheus
       app.kubernetes.io/part-of: kube-prometheus
-      app.kubernetes.io/version: 2.25.0
+      app.kubernetes.io/version: 2.26.0
   podMonitorNamespaceSelector: {}
   podMonitorSelector: {}
   probeNamespaceSelector: {}
@@ -49,6 +50,7 @@ spec:
     requests:
       memory: 400Mi
   retention: 30d
+  ruleNamespaceSelector: {}
   ruleSelector: {}
   securityContext:
     fsGroup: 2000
@@ -66,4 +68,4 @@ spec:
           requests:
             storage: 32Gi
         storageClassName: rook-ceph-block
-  version: 2.25.0
+  version: 2.26.0
