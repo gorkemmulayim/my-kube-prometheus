@@ -52,14 +52,51 @@ local kp =
           ruleSelector: {},
           retention: '30d',
           replicas: 1,
+          securityContext: {
+            runAsUser: 0,
+            runAsNonRoot: false,
+            fsGroup: 0,
+          },
           storage: {
             volumeClaimTemplate: {
               spec: {
                 accessModes: ['ReadWriteOnce'],
                 resources: { requests: { storage: '32Gi' } },
-                storageClassName: 'rook-ceph-block',
               },
             },
+          },
+        },
+      },
+      persistentVolume: {
+        kind: 'PersistentVolume',
+        apiVersion: 'v1',
+        metadata: {
+          name: 'prometheus-k8s-db-prometheus-k8s-0',
+        },
+        spec: {
+          capacity: {
+            storage: '32Gi',
+          },
+          hostPath: {
+            path: '/mnt/kubernetes/prometheus/data0',
+          },
+          accessModes: ['ReadWriteOnce'],
+          nodeAffinity: {
+            required: {
+              nodeSelectorTerms: [{
+                matchExpressions: [{
+                  key: 'kubernetes.io/hostname',
+                  operator: 'In',
+                  values: ['work'],
+                }],
+              }],
+            },
+          },
+          claimRef: {
+            kind: 'PersistentVolumeClaim',
+            namespace: $.values.common.namespace,
+            name: 'prometheus-k8s-db-prometheus-k8s-0',
+            apiVersion: 'v1',
           },
         },
       },
@@ -143,20 +180,58 @@ local kp =
           },
           template+: {
             spec+: {
-            volumes:
-              std.map(
-                function(v)
-                  if v.name == 'grafana-storage' then {
-                    'name':'grafana-storage',
-                    'persistentVolumeClaim': {
-                      'claimName': 'grafana-storage',
+              securityContext: {
+                runAsUser: 0,
+                runAsNonRoot: false,
+                fsGroup: 0,
+              },
+              volumes:
+                std.map(
+                  function(v)
+                    if v.name == 'grafana-storage' then {
+                      'name':'grafana-storage',
+                      'persistentVolumeClaim': {
+                        'claimName': 'grafana-storage',
+                      }
                     }
-                  }
-                  else
-                    v,
-              super.volumes,
-              ),
+                    else
+                      v,
+                super.volumes,
+                ),
             },
+          },
+        },
+      },
+      persistentVolume: {
+        kind: 'PersistentVolume',
+        apiVersion: 'v1',
+        metadata: {
+          name: 'grafana-storage',
+        },
+        spec: {
+          capacity: {
+            storage: '16Gi',
+          },
+          hostPath: {
+            path: '/mnt/kubernetes/grafana/data',
+          },
+          accessModes: ['ReadWriteOnce'],
+          nodeAffinity: {
+            required: {
+              nodeSelectorTerms: [{
+                matchExpressions: [{
+                  key: 'kubernetes.io/hostname',
+                  operator: 'In',
+                  values: ['work'],
+                }],
+              }],
+            },
+          },
+          claimRef: {
+            kind: 'PersistentVolumeClaim',
+            namespace: $.values.common.namespace,
+            name: 'grafana-storage',
+            apiVersion: 'v1',
           },
         },
       },
@@ -232,7 +307,6 @@ local kp =
               storage: '4Gi',
             },
           },
-          storageClassName: 'rook-ceph-block',
         },
       },
     },
@@ -241,14 +315,51 @@ local kp =
         spec+: {
           externalUrl: 'https://alertmanager.localhost',
           replicas: 1,
+          securityContext: {
+            runAsUser: 0,
+            runAsNonRoot: false,
+            fsGroup: 0,
+          },
           storage: {
             volumeClaimTemplate: {
               spec: {
                 accessModes: ['ReadWriteOnce'],
                 resources: { requests: { storage: '16Gi' } },
-                storageClassName: 'rook-ceph-block',
               },
             },
+          },
+        },
+      },
+      persistentVolume: {
+        kind: 'PersistentVolume',
+        apiVersion: 'v1',
+        metadata: {
+          name: 'alertmanager-main-db-alertmanager-main-0',
+        },
+        spec: {
+          capacity: {
+            storage: '16Gi',
+          },
+          hostPath: {
+            path: '/mnt/kubernetes/alertmanager/data0',
+          },
+          accessModes: ['ReadWriteOnce'],
+          nodeAffinity: {
+            required: {
+              nodeSelectorTerms: [{
+                matchExpressions: [{
+                  key: 'kubernetes.io/hostname',
+                  operator: 'In',
+                  values: ['work'],
+                }],
+              }],
+            },
+          },
+          claimRef: {
+            kind: 'PersistentVolumeClaim',
+            namespace: $.values.common.namespace,
+            name: 'alertmanager-main-db-alertmanager-main-0',
+            apiVersion: 'v1',
           },
         },
       },

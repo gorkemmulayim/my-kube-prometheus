@@ -1,0 +1,24 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: prometheus-k8s-db-prometheus-k8s-0
+spec:
+  accessModes:
+  - ReadWriteOnce
+  capacity:
+    storage: 32Gi
+  claimRef:
+    apiVersion: v1
+    kind: PersistentVolumeClaim
+    name: prometheus-k8s-db-prometheus-k8s-0
+    namespace: monitoring
+  hostPath:
+    path: /mnt/kubernetes/prometheus/data0
+  nodeAffinity:
+    required:
+      nodeSelectorTerms:
+      - matchExpressions:
+        - key: kubernetes.io/hostname
+          operator: In
+          values:
+          - work

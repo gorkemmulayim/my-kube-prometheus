@@ -30,6 +30,7 @@ spec:
       name: alertmanager-main
       namespace: monitoring
       port: web
+  enableFeatures: []
   externalLabels: {}
   externalUrl: https://prometheus.localhost
   image: quay.io/prometheus/prometheus:v2.26.0
@@ -53,9 +54,9 @@ spec:
   ruleNamespaceSelector: {}
   ruleSelector: {}
   securityContext:
-    fsGroup: 2000
-    runAsNonRoot: true
-    runAsUser: 1000
+    fsGroup: 0
+    runAsNonRoot: false
+    runAsUser: 0
   serviceAccountName: prometheus-k8s
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector: {}
@@ -67,5 +68,4 @@ spec:
         resources:
           requests:
             storage: 32Gi
-        storageClassName: rook-ceph-block
   version: 2.26.0
