@@ -4,20 +4,11 @@
     {
       "source": {
         "git": {
-          "remote": "https://github.com/jaegertracing/jaeger",
-          "subdir": "monitoring/jaeger-mixin"
-        }
-      },
-      "version": "master"
-    },
-    {
-      "source": {
-        "git": {
           "remote": "https://github.com/prometheus-operator/kube-prometheus",
           "subdir": "jsonnet/kube-prometheus"
         }
       },
-      "version": "main"
+      "version": "v0.13.0"
     }
   ],
   "legacyImports": true

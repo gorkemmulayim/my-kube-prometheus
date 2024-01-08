@@ -1,16 +1,11 @@
-local jaegerAlerts = (import 'jaeger-mixin/alerts.libsonnet').prometheusAlerts;
-local jaegerDashboard = (import 'jaeger-mixin/mixin.libsonnet').grafanaDashboards;
-
 local kp =
   (import 'kube-prometheus/main.libsonnet') +
   (import 'kube-prometheus/addons/all-namespaces.libsonnet') +
   (import 'kube-prometheus/addons/anti-affinity.libsonnet') +
   (import 'kube-prometheus/addons/custom-metrics.libsonnet') +
-  // (import 'kube-prometheus/addons/external-metrics.libsonnet') +
+  (import 'kube-prometheus/addons/external-metrics.libsonnet') +
+  (import 'kube-prometheus/addons/networkpolicies-disabled.libsonnet') +
   (import 'kube-prometheus/platforms/kubeadm.libsonnet') +
-  (import 'kube-prometheus/addons/weave-net/weave-net.libsonnet') +
-  (import 'jaeger-mixin/alerts.libsonnet') +
-  (import 'jaeger-mixin/mixin.libsonnet') +
   {
     values+:: {
       common+: {
@@ -18,11 +13,11 @@ local kp =
         images: {
           alertmanager: 'quay.io/prometheus/alertmanager:v' + $.values.common.versions.alertmanager,
           blackboxExporter: 'quay.io/prometheus/blackbox-exporter:v' + $.values.common.versions.blackboxExporter,
-          grafana: 'grafana/grafana:v' + $.values.common.versions.grafana,
-          kubeStateMetrics: 'k8s.gcr.io/kube-state-metrics/kube-state-metrics:v' + $.values.common.versions.kubeStateMetrics,
+          grafana: 'grafana/grafana:' + $.values.common.versions.grafana,
+          kubeStateMetrics: 'registry.k8s.io/kube-state-metrics/kube-state-metrics:v' + $.values.common.versions.kubeStateMetrics,
           nodeExporter: 'quay.io/prometheus/node-exporter:v' + $.values.common.versions.nodeExporter,
           prometheus: 'quay.io/prometheus/prometheus:v' + $.values.common.versions.prometheus,
-          prometheusAdapter: 'directxman12/k8s-prometheus-adapter:v' + $.values.common.versions.prometheusAdapter,
+          prometheusAdapter: 'registry.k8s.io/prometheus-adapter/prometheus-adapter:v' + $.values.common.versions.prometheusAdapter,
           prometheusOperator: 'quay.io/prometheus-operator/prometheus-operator:v' + $.values.common.versions.prometheusOperator,
           prometheusOperatorReloader: 'quay.io/prometheus-operator/prometheus-config-reloader:v' + $.values.common.versions.prometheusOperator,
           kubeRbacProxy: 'quay.io/brancz/kube-rbac-proxy:v' + $.values.common.versions.kubeRbacProxy,
@@ -40,8 +35,12 @@ local kp =
             },
           },
         },
-        dashboards+:: {
-          'jaeger.json': jaegerDashboard['jaeger.json'],
+      },
+    },
+    prometheusAdapter+: {
+      deployment+: {
+        spec+: {
+          replicas: 1,
         },
       },
     },
@@ -87,7 +86,7 @@ local kp =
                 matchExpressions: [{
                   key: 'kubernetes.io/hostname',
                   operator: 'In',
-                  values: ['work'],
+                  values: ['ubuntu'],
                 }],
               }],
             },
@@ -130,42 +129,6 @@ local kp =
             },
           }],
         },
-      },
-      virtualService: {
-        kind: 'VirtualService',
-        apiVersion: 'networking.istio.io/v1beta1',
-        metadata: {
-          name: 'prometheus-k8s',
-          namespace: $.values.common.namespace,
-        },
-        spec: {
-          hosts: ['prometheus.localhost'],
-          gateways: ['istio-system/default-gateway'],
-          http: [{
-            match: [{
-              uri: {
-                prefix: '/',
-              },
-            }],
-            route: [{
-              destination: {
-                host: 'prometheus-k8s',
-                port: {
-                  number: 9090,
-                },
-              },
-            }],
-          }],
-        },
-      },
-      prometheusRuleJaeger: {
-        apiVersion: 'monitoring.coreos.com/v1',
-        kind: 'PrometheusRule',
-        metadata: {
-          name: 'jaeger-alerts',
-          namespace: $.values.common.namespace,
-        },
-        spec: jaegerAlerts,
       },
     },
     grafana+:: {
@@ -222,7 +185,7 @@ local kp =
                 matchExpressions: [{
                   key: 'kubernetes.io/hostname',
                   operator: 'In',
-                  values: ['work'],
+                  values: ['ubuntu'],
                 }],
               }],
             },
@@ -263,33 +226,6 @@ local kp =
                 },
               }],
             },
-          }],
-        },
-      },
-      virtualService: {
-        kind: 'VirtualService',
-        apiVersion: 'networking.istio.io/v1beta1',
-        metadata: {
-          name: 'grafana',
-          namespace: $.values.common.namespace,
-        },
-        spec: {
-          hosts: ['grafana.localhost'],
-          gateways: ['istio-system/default-gateway'],
-          http: [{
-            match: [{
-              uri: {
-                prefix: '/',
-              },
-            }],
-            route: [{
-              destination: {
-                host: 'grafana',
-                port: {
-                  number: 3000,
-                },
-              },
-            }],
           }],
         },
       },
@@ -350,7 +286,7 @@ local kp =
                 matchExpressions: [{
                   key: 'kubernetes.io/hostname',
                   operator: 'In',
-                  values: ['work'],
+                  values: ['ubuntu'],
                 }],
               }],
             },
@@ -394,33 +330,6 @@ local kp =
           }],
         },
       },
-      virtualService: {
-        kind: 'VirtualService',
-        apiVersion: 'networking.istio.io/v1beta1',
-        metadata: {
-          name: 'alertmanager-main',
-          namespace: $.values.common.namespace,
-        },
-        spec: {
-          hosts: ['alertmanager.localhost'],
-          gateways: ['istio-system/default-gateway'],
-          http: [{
-            match: [{
-              uri: {
-                prefix: '/',
-              },
-            }],
-            route: [{
-              destination: {
-                host: 'alertmanager-main',
-                port: {
-                  number: 9093,
-                },
-              },
-            }],
-          }],
-        },
-      },
     },
   };
 
@@ -429,6 +338,7 @@ local kp =
   ['setup/prometheus-operator-' + name]: kp.prometheusOperator[name]
   for name in std.filter((function(name) name != 'serviceMonitor' && name != 'prometheusRule'), std.objectFields(kp.prometheusOperator))
 } +
+// { 'setup/pyrra-slo-CustomResourceDefinition': kp.pyrra.crd } +
 // serviceMonitor and prometheusRule are separated so that they can be created after the CRDs are ready
 { 'prometheus-operator-serviceMonitor': kp.prometheusOperator.serviceMonitor } +
 { 'prometheus-operator-prometheusRule': kp.prometheusOperator.prometheusRule } +
@@ -436,6 +346,7 @@ local kp =
 { ['alertmanager-' + name]: kp.alertmanager[name] for name in std.objectFields(kp.alertmanager) } +
 { ['blackbox-exporter-' + name]: kp.blackboxExporter[name] for name in std.objectFields(kp.blackboxExporter) } +
 { ['grafana-' + name]: kp.grafana[name] for name in std.objectFields(kp.grafana) } +
+// { ['pyrra-' + name]: kp.pyrra[name] for name in std.objectFields(kp.pyrra) if name != 'crd' } +
 { ['kube-state-metrics-' + name]: kp.kubeStateMetrics[name] for name in std.objectFields(kp.kubeStateMetrics) } +
 { ['kubernetes-' + name]: kp.kubernetesControlPlane[name] for name in std.objectFields(kp.kubernetesControlPlane) } +
 { ['node-exporter-' + name]: kp.nodeExporter[name] for name in std.objectFields(kp.nodeExporter) } +
