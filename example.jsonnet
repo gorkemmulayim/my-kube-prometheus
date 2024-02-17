@@ -54,7 +54,6 @@ local kp =
       prometheus+: {
         spec+: {
           externalUrl: 'https://prometheus.localhost',
-          ruleSelector: {},
           retention: '30d',
           replicas: 1,
           storage: storage(),
