@@ -55,18 +55,21 @@ spec:
   ruleNamespaceSelector: {}
   ruleSelector: {}
   securityContext:
-    fsGroup: 0
-    runAsNonRoot: false
-    runAsUser: 0
+    fsGroup: 2000
+    runAsNonRoot: true
+    runAsUser: 1000
   serviceAccountName: prometheus-k8s
   serviceMonitorNamespaceSelector: {}
   serviceMonitorSelector: {}
   storage:
     volumeClaimTemplate:
+      apiVersion: v1
+      kind: PersistentVolumeClaim
       spec:
         accessModes:
         - ReadWriteOnce
         resources:
           requests:
-            storage: 32Gi
+            storage: 16Gi
+        storageClassName: local-storage
   version: 2.46.0

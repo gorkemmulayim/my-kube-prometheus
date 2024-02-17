@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: prometheus-k8s
+  namespace: monitoring
+  annotations:
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    cert-manager.io/cluster-issuer: self-signed
+    cert-manager.io/common-name: prometheus.localhost
+    cert-manager.io/revision-history-limit: "5"
+    cert-manager.io/private-key-algorithm: RSA
+    cert-manager.io/private-key-size: "8192"
+    cert-manager.io/private-key-rotation-policy: Always
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - prometheus.localhost
+      secretName: prometheus-tls
+  rules:
+    - host: prometheus.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: prometheus-k8s
+                port:
+                  name: web
