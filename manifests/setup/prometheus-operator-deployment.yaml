@@ -25,6 +25,15 @@ spec:
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 0.67.1
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - ubuntu
       automountServiceAccountToken: true
       containers:
       - args:
@@ -81,3 +90,7 @@ spec:
         seccompProfile:
           type: RuntimeDefault
       serviceAccountName: prometheus-operator
+      tolerations:
+      - effect: NoSchedule
+        key: monitoring
+        operator: Exists

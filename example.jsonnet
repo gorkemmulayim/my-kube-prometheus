@@ -10,9 +10,30 @@ local storage() = {
         },
       },
       storageClassName: 'local-storage',
+      volumeMode: 'Filesystem',
     },
   },
 };
+
+local affinity() = {
+  nodeAffinity: {
+    requiredDuringSchedulingIgnoredDuringExecution: {
+      nodeSelectorTerms: [{
+        matchExpressions: [{
+          key: 'kubernetes.io/hostname',
+          operator: 'In',
+          values: ['ubuntu'],
+        }],
+      }],
+    },
+  },
+};
+
+local tolerations() = [{
+  key: 'monitoring',
+  operator: 'Exists',
+  effect: 'NoSchedule',
+}];
 
 local kp =
   (import 'kube-prometheus/main.libsonnet') +
@@ -21,11 +42,12 @@ local kp =
   //(import 'kube-prometheus/addons/custom-metrics.libsonnet') +
   (import 'kube-prometheus/addons/external-metrics.libsonnet') +
   (import 'kube-prometheus/addons/networkpolicies-disabled.libsonnet') +
-  (import 'kube-prometheus/platforms/kubeadm.libsonnet') +
+  //(import 'kube-prometheus/addons/strip-limits.libsonnet') +
   {
     values+:: {
       common+: {
         namespace: 'monitoring',
+        platform: 'kubeadm',
         images: {
           alertmanager: 'quay.io/prometheus/alertmanager:v' + $.values.common.versions.alertmanager,
           blackboxExporter: 'quay.io/prometheus/blackbox-exporter:v' + $.values.common.versions.blackboxExporter,
@@ -39,6 +61,9 @@ local kp =
           kubeRbacProxy: 'quay.io/brancz/kube-rbac-proxy:v' + $.values.common.versions.kubeRbacProxy,
           configmapReload: 'jimmidyson/configmap-reload:v' + $.values.common.versions.configmapReload,
         },
+      },
+      kubernetesControlPlane+:: {
+        kubeProxy: true,
       },
       grafana+:: {
         config+: {
@@ -57,6 +82,8 @@ local kp =
           retention: '30d',
           replicas: 1,
           storage: storage(),
+          affinity: affinity(),
+          tolerations: tolerations(),
         },
       },
     },
@@ -66,6 +93,8 @@ local kp =
           externalUrl: 'https://alertmanager.localhost',
           replicas: 1,
           storage: storage(),
+          affinity: affinity(),
+          tolerations: tolerations(),
         },
       },
     },
@@ -77,6 +106,8 @@ local kp =
           },
           template+: {
             spec+: {
+              affinity: affinity(),
+              tolerations: tolerations(),
               volumes:
                 std.map(
                   function(v)
@@ -95,10 +126,52 @@ local kp =
         },
       },
     },
+    prometheusOperator+: {
+      deployment+: {
+        spec+: {
+          template+: {
+            spec+: {
+              affinity: affinity(),
+              tolerations: tolerations(),
+            },
+          },
+        },
+      },
+    },
+    kubeStateMetrics+: {
+      deployment+: {
+        spec+: {
+          template+: {
+            spec+: {
+              affinity: affinity(),
+              tolerations: tolerations(),
+            },
+          },
+        },
+      },
+    },
+    blackboxExporter+: {
+      deployment+: {
+        spec+: {
+          template+: {
+            spec+: {
+              affinity: affinity(),
+              tolerations: tolerations(),
+            },
+          },
+        },
+      },
+    },
     prometheusAdapter+: {
       deployment+: {
         spec+: {
           replicas: 1,
+          template+: {
+            spec+: {
+              affinity: affinity(),
+              tolerations: tolerations(),
+            },
+          },
         },
       },
     },

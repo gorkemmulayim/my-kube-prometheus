@@ -11,19 +11,14 @@ metadata:
   namespace: monitoring
 spec:
   affinity:
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-      - podAffinityTerm:
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: prometheus
-              app.kubernetes.io/instance: k8s
-              app.kubernetes.io/name: prometheus
-              app.kubernetes.io/part-of: kube-prometheus
-          namespaces:
-          - monitoring
-          topologyKey: kubernetes.io/hostname
-        weight: 100
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - ubuntu
   alerting:
     alertmanagers:
     - apiVersion: v2
@@ -72,4 +67,9 @@ spec:
           requests:
             storage: 16Gi
         storageClassName: local-storage
+        volumeMode: Filesystem
+  tolerations:
+  - effect: NoSchedule
+    key: monitoring
+    operator: Exists
   version: 2.46.0

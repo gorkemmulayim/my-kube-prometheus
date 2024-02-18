@@ -30,18 +30,14 @@ spec:
         app.kubernetes.io/version: 0.11.1
     spec:
       affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: metrics-adapter
-                  app.kubernetes.io/name: prometheus-adapter
-                  app.kubernetes.io/part-of: kube-prometheus
-              namespaces:
-              - monitoring
-              topologyKey: kubernetes.io/hostname
-            weight: 100
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - ubuntu
       automountServiceAccountToken: true
       containers:
       - args:
@@ -103,6 +99,10 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       serviceAccountName: prometheus-adapter
+      tolerations:
+      - effect: NoSchedule
+        key: monitoring
+        operator: Exists
       volumes:
       - emptyDir: {}
         name: tmpfs

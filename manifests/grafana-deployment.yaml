@@ -29,6 +29,15 @@ spec:
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 9.5.3
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - ubuntu
       automountServiceAccountToken: false
       containers:
       - env: []
@@ -157,6 +166,10 @@ spec:
         runAsNonRoot: true
         runAsUser: 65534
       serviceAccountName: grafana
+      tolerations:
+      - effect: NoSchedule
+        key: monitoring
+        operator: Exists
       volumes:
       - name: grafana-storage
         persistentVolumeClaim:

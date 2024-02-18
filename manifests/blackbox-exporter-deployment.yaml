@@ -26,18 +26,14 @@ spec:
         app.kubernetes.io/version: 0.24.0
     spec:
       affinity:
-        podAntiAffinity:
-          preferredDuringSchedulingIgnoredDuringExecution:
-          - podAffinityTerm:
-              labelSelector:
-                matchLabels:
-                  app.kubernetes.io/component: exporter
-                  app.kubernetes.io/name: blackbox-exporter
-                  app.kubernetes.io/part-of: kube-prometheus
-              namespaces:
-              - monitoring
-              topologyKey: kubernetes.io/hostname
-            weight: 100
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - ubuntu
       automountServiceAccountToken: true
       containers:
       - args:
@@ -121,6 +117,10 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       serviceAccountName: blackbox-exporter
+      tolerations:
+      - effect: NoSchedule
+        key: monitoring
+        operator: Exists
       volumes:
       - configMap:
           name: blackbox-exporter-configuration

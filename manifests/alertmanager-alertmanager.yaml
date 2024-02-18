@@ -11,19 +11,14 @@ metadata:
   namespace: monitoring
 spec:
   affinity:
-    podAntiAffinity:
-      preferredDuringSchedulingIgnoredDuringExecution:
-      - podAffinityTerm:
-          labelSelector:
-            matchLabels:
-              app.kubernetes.io/component: alert-router
-              app.kubernetes.io/instance: main
-              app.kubernetes.io/name: alertmanager
-              app.kubernetes.io/part-of: kube-prometheus
-          namespaces:
-          - monitoring
-          topologyKey: kubernetes.io/hostname
-        weight: 100
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+        - matchExpressions:
+          - key: kubernetes.io/hostname
+            operator: In
+            values:
+            - ubuntu
   externalUrl: https://alertmanager.localhost
   image: quay.io/prometheus/alertmanager:v0.26.0
   nodeSelector:
@@ -59,4 +54,9 @@ spec:
           requests:
             storage: 16Gi
         storageClassName: local-storage
+        volumeMode: Filesystem
+  tolerations:
+  - effect: NoSchedule
+    key: monitoring
+    operator: Exists
   version: 0.26.0

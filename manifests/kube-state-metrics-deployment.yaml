@@ -25,6 +25,15 @@ spec:
         app.kubernetes.io/part-of: kube-prometheus
         app.kubernetes.io/version: 2.9.2
     spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                - ubuntu
       automountServiceAccountToken: true
       containers:
       - args:
@@ -104,3 +113,7 @@ spec:
       nodeSelector:
         kubernetes.io/os: linux
       serviceAccountName: kube-state-metrics
+      tolerations:
+      - effect: NoSchedule
+        key: monitoring
+        operator: Exists
