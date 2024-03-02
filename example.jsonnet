@@ -40,7 +40,7 @@ local kp =
   (import 'kube-prometheus/addons/all-namespaces.libsonnet') +
   (import 'kube-prometheus/addons/anti-affinity.libsonnet') +
   //(import 'kube-prometheus/addons/custom-metrics.libsonnet') +
-  (import 'kube-prometheus/addons/external-metrics.libsonnet') +
+  //(import 'kube-prometheus/addons/external-metrics.libsonnet') +
   (import 'kube-prometheus/addons/networkpolicies-disabled.libsonnet') +
   //(import 'kube-prometheus/addons/strip-limits.libsonnet') +
   {

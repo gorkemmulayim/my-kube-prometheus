@@ -12,5 +12,3 @@ kubectl create secret -n monitoring generic auth --from-file=auth
 rm -rf auth
 kubectl apply -f custom-manifests
 ```
-
-echo  "admin:$(echo admin | openssl passwd -apr1 -stdin)"
