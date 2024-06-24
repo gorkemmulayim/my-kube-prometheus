@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: grafana
+  namespace: monitoring
+  annotations:
+    traefik.ingress.kubernetes.io/router.middlewares: monitoring-grafana@kubernetescrd
+    cert-manager.io/cluster-issuer: self-signed
+    cert-manager.io/common-name: grafana.localhost
+    cert-manager.io/revision-history-limit: "5"
+    cert-manager.io/private-key-algorithm: RSA
+    cert-manager.io/private-key-size: "8192"
+    cert-manager.io/private-key-rotation-policy: Always
+spec:
+  ingressClassName: traefik
+  tls:
+    - hosts:
+        - grafana.localhost
+      secretName: grafana-tls
+  rules:
+    - host: grafana.localhost
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: grafana
+                port:
+                  name: http

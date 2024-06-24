@@ -7,7 +7,7 @@ spec:
     storage: 16Gi
   volumeMode: Filesystem
   accessModes:
-  - ReadWriteOnce
+  - ReadWriteOncePod
   persistentVolumeReclaimPolicy: Retain
   storageClassName: local-storage
   local:
