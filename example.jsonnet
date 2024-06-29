@@ -3,7 +3,7 @@ local storage() = {
     apiVersion: 'v1',
     kind: 'PersistentVolumeClaim',
     spec: {
-      accessModes: ['ReadWriteOnce'],
+      accessModes: ['ReadWriteOncePod'],
       resources: {
         requests: {
           storage: '16Gi',
